@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model ReservationEvent {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  eventId         String
+  schemaVersion   Int
+  type            String
+  source          String
+  reservationId   String
+  propertyId      String?
+  occurredAt      DateTime
+  receivedAt      DateTime
+  status          String
+  payload         Json
+  requestId       String
+  originalPayload Json      @default("{}")
+  history         Json      @default("[]")
+  payloadHash     String
+  sourceVersion   Int
+  nextAttemptAt   DateTime
+  leaseToken      String?
+  leaseUntil      DateTime?
+  attempts        Int       @default(0)
+  reason          String?
+  processedAt     DateTime?
+
+  @@unique([source, eventId])
+  @@index([receivedAt(sort: Desc), id(sort: Desc)], map: "receivedAt_-1__id_-1")
+  @@index([source, receivedAt(sort: Desc), id(sort: Desc)], map: "source_1_receivedAt_-1__id_-1")
+  @@index([type, receivedAt(sort: Desc), id(sort: Desc)], map: "type_1_receivedAt_-1__id_-1")
+  @@index([reservationId, receivedAt(sort: Desc), id(sort: Desc)], map: "reservationId_1_receivedAt_-1__id_-1")
+  @@index([propertyId, receivedAt(sort: Desc), id(sort: Desc)], map: "propertyId_1_receivedAt_-1__id_-1")
+  @@index([status, nextAttemptAt])
+  @@index([source, reservationId, receivedAt])
+  @@map("events")
+}
+
+model Reservation {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  source                String
+  externalReservationId String   @map("reservationId")
+  propertyId            String
+  checkIn               DateTime
+  checkOut              DateTime
+  status                String
+  updatedAt             DateTime
+  sourceVersion         Int
+  stateHash             String
+
+  @@unique([source, externalReservationId])
+  @@index([updatedAt(sort: Desc), id(sort: Desc)], map: "updatedAt_-1__id_-1")
+  @@index([source, updatedAt(sort: Desc), id(sort: Desc)], map: "source_1_updatedAt_-1__id_-1")
+  @@index([status, updatedAt(sort: Desc), id(sort: Desc)], map: "status_1_updatedAt_-1__id_-1")
+  @@index([propertyId, updatedAt(sort: Desc), id(sort: Desc)], map: "propertyId_1_updatedAt_-1__id_-1")
+  @@index([propertyId, status, checkIn])
+  @@map("reservations")
+}
+
+model WebhookDelivery {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId     String   @db.ObjectId
+  requestId   String
+  receivedAt  DateTime
+  payload     Json
+  payloadHash String
+  outcome     String
+
+  @@index([eventId, receivedAt])
+  @@map("webhook_deliveries")
+}
+
+model ConflictAlert {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  reservationA String   @db.ObjectId
+  reservationB String   @db.ObjectId
+  propertyId   String
+  status       String
+  history      Json
+  updatedAt    DateTime
+
+  @@unique([reservationA, reservationB])
+  @@index([propertyId, status])
+  @@map("conflict_alerts")
+}
+
+model PropertyGuard {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  propertyId String @unique
+  revision   Int    @default(0)
+
+  @@map("property_guards")
+}

@@ -1,0 +1,50 @@
+{
+  "name": "staypulse-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.21.0"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --import tsx --watch src/main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --env-file-if-exists=.env dist/main.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "node --import tsx --test tests/unit/*.test.ts tests/integration/*.test.ts",
+    "test:unit": "node --import tsx --test tests/unit/*.test.ts",
+    "test:integration": "node --import tsx --test tests/integration/*.test.ts",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build",
+    "prisma:generate": "node --env-file-if-exists=.env --import tsx scripts/prisma.ts generate",
+    "prisma:validate": "node --env-file-if-exists=.env --import tsx scripts/prisma.ts validate",
+    "prisma:format": "node --env-file-if-exists=.env --import tsx scripts/prisma.ts format",
+    "prisma:push": "node --env-file-if-exists=.env --import tsx scripts/prisma.ts db push",
+    "prisma:studio": "node --env-file-if-exists=.env --import tsx scripts/prisma.ts studio",
+    "db:reset": "npm run prisma:validate && npm run prisma:generate && npm run prisma:push",
+    "postinstall": "npm run prisma:generate",
+    "prebuild": "npm run prisma:generate",
+    "db:seed": "node --env-file-if-exists=.env --import tsx prisma/seed.ts",
+    "data:migrate": "node --env-file-if-exists=.env --import tsx scripts/data-migrations/001-events.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "express": "^5.3.0",
+    "mongodb": "^7.7.0",
+    "pino": "^10.4.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "@types/supertest": "^7.2.1",
+    "eslint": "^10.12.0",
+    "mongodb-memory-server": "^11.3.0",
+    "prisma": "6.19.3",
+    "supertest": "^7.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2"
+  }
+}
