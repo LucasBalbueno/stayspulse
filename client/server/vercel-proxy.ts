@@ -45,6 +45,9 @@ export async function proxyRequest(
   }
   target.pathname = `${target.pathname.replace(/\/$/, '')}/${path}`;
   incoming.searchParams.delete('__path');
+  // A Vercel também inclui a captura :path* na query da função.
+  // Ambos são metadados do rewrite, não filtros aceitos pela API.
+  incoming.searchParams.delete('path');
   target.search = incoming.searchParams.toString();
 
   let body: Uint8Array | undefined;
