@@ -9,7 +9,7 @@ import type {
   Reservation,
 } from "./types";
 const messages: Record<number, string> = {
-  401: "Chave não autorizada. Confira STAYPULSE_API_KEY em client/.env e reinicie o frontend.",
+  401: "Chave não autorizada. Confira STAYPULSE_API_KEY no ambiente do frontend.",
   409: "Este identificador de evento já foi usado com outro conteúdo.",
   422: "Revise os campos enviados. A API encontrou valores inválidos.",
   503: "O serviço está temporariamente indisponível. Tente novamente em instantes.",
@@ -89,7 +89,7 @@ export class Api {
       throw new ApiError(
         0,
         "CONNECTION_UNAVAILABLE",
-        "Não foi possível acessar a API. Confira se o backend está ativo e STAYPULSE_API_URL está correta em client/.env.",
+        "Não foi possível acessar a API. Confira se o backend está ativo e STAYPULSE_API_URL está correta no ambiente do frontend.",
       );
     }
     const body = await response.json().catch(() => null);
