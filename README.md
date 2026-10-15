@@ -1,5 +1,12 @@
 # StayPulse
 
+## Produção
+
+- **Painel:** [stayspulse.vercel.app](https://stayspulse.vercel.app/)
+- **API:** [stayspulse-api.vercel.app](https://stayspulse-api.vercel.app)
+
+O painel acessa a API pelo proxy `/api`, que adiciona a chave de autenticação no servidor. Chamadas diretas às rotas de negócio da API exigem o cabeçalho `X-API-Key`.
+
 ## Visão completa do projeto
 
 Aplicação full-stack para operações e rastreabilidade de reservas. O projeto recebe eventos fictícios de canais, registra seu histórico, atualiza a visão atual das reservas e sinaliza possíveis conflitos de calendário.
