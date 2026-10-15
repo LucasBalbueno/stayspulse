@@ -1,7 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import type { RequestHandler } from 'express';
 import { AppError } from '../errors/app-error.js';
-import { hash } from '../../modules/events/domain/hash.js';
 
 // Middleware para autenticar requisições usando uma chave de API
 

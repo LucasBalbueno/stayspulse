@@ -562,3 +562,26 @@ test('falhas transitórias reagendam com backoff e falhas repetidas chegam ao li
   assert.equal(event.attempts, 8);
   assert.equal(await prisma.reservation.count(), 0);
 });
+
+test('modo serverless processa webhook e retoma retries durante polling autenticado', async () => {
+  const cases = compose(prisma);
+  const serverless = createApp(cases, { apiKey, logger, processOnRequest: true });
+  await request(serverless).post('/webhooks/reservations').set('X-API-Key', apiKey).send(payload).expect(201);
+  assert.equal((await prisma.reservationEvent.findFirstOrThrow()).status, 'completed');
+  assert.equal(await prisma.reservation.count(), 1);
+
+  await post({ ...payload, eventId: 'pending-serverless', reservation: { ...payload.reservation, reservationId: 'res-serverless' } }).expect(201);
+  await request(serverless).get('/events').expect(401);
+  assert.equal(await prisma.reservationEvent.count({ where: { status: 'received' } }), 1);
+  await request(serverless).get('/reservations').set('X-API-Key', apiKey).expect(200);
+  assert.equal(await prisma.reservation.count(), 2);
+  assert.equal(await prisma.reservationEvent.count({ where: { status: 'received' } }), 0);
+});
+
+test('falha do worker serverless preserva confirmação do webhook persistido', async () => {
+  const cases = compose(prisma);
+  cases.processEvents.execute = async () => { throw new Error('worker unavailable'); };
+  const serverless = createApp(cases, { apiKey, logger, processOnRequest: true });
+  await request(serverless).post('/webhooks/reservations').set('X-API-Key', apiKey).send(payload).expect(201);
+  assert.equal(await prisma.reservationEvent.count({ where: { status: 'received' } }), 1);
+});

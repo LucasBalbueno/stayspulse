@@ -2,7 +2,7 @@ import { Router } from 'express';
 import type { ReceiveReservationWebhook } from '../../application/receive-reservation-webhook.js';
 import { webhookSchema } from './schema.js';
 
-export function webhookRoutes(receive: ReceiveReservationWebhook) {
+export function webhookRoutes(receive: ReceiveReservationWebhook, processPending?: () => Promise<void>) {
   const router = Router();
 
   router.post('/reservations', async (req, res) => {
@@ -16,6 +16,8 @@ export function webhookRoutes(receive: ReceiveReservationWebhook) {
       res.locals.requestId as string,
       req.body,
     );
+
+    await processPending?.();
 
     // Envia os dados processados
     res.status(201).json({ data });
