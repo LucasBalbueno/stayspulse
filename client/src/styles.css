@@ -622,6 +622,7 @@ fieldset {
   padding: 3px 6px;
 }
 .table-scroll {
+  position: relative;
   overflow: auto;
   margin: 0 -25px;
 }
@@ -817,6 +818,8 @@ td button {
   padding: 22px 0;
 }
 .alert-card {
+  min-width: 0;
+  overflow-wrap: anywhere;
   border: 1px solid #dfddce;
   border-radius: 8px;
   padding: 20px;
@@ -841,12 +844,23 @@ td button {
   gap: 12px;
 }
 .history li {
+  min-width: 0;
+  overflow-wrap: anywhere;
   display: flex;
   gap: 15px;
   align-items: center;
   flex-wrap: wrap;
   font-size: 11px;
   color: #667e6b;
+}
+.history li > span {
+  min-width: 0;
+}
+.alert-card .section-head {
+  flex-wrap: wrap;
+}
+.alert-card .section-head > div {
+  min-width: 0;
 }
 .history li:before {
   content: "";
@@ -1063,33 +1077,32 @@ section,
 }
 @media (max-width: 850px) {
   .sidebar {
-    position: static;
-    width: 100%;
-    height: auto;
-    padding: 18px 22px;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .brand {
-    font-size: 22px;
-  }
-  .sidebar nav {
-    display: flex;
-    overflow: auto;
-    gap: 6px;
-    margin-top: 18px;
-  }
-  .sidebar nav a {
-    white-space: nowrap;
-    padding: 8px;
-    font-size: 11px;
-  }
-  .sidebar nav a span {
     display: none;
   }
-  .workspace-label,
-  .sidebar-bottom {
-    display: none;
+  button,
+  input,
+  select {
+    min-height: 44px;
+  }
+  input,
+  select {
+    font-size: 16px;
+  }
+  fieldset,
+  .form-grid > *,
+  .filters > *,
+  .metrics > *,
+  .section-head > * {
+    min-width: 0;
+  }
+  .section-head,
+  .actions {
+    flex-wrap: wrap;
+  }
+  .section-head,
+  .alert-card,
+  .metric {
+    overflow-wrap: anywhere;
   }
   .app-shell {
     display: block;
@@ -1150,9 +1163,6 @@ section,
   .topbar {
     padding: 12px 15px;
   }
-  .sidebar {
-    padding: 18px 15px;
-  }
   h1 {
     font-size: 30px;
   }
@@ -1197,6 +1207,23 @@ section,
     flex-direction: column;
     align-items: stretch;
   }
+  .input-action {
+    flex-wrap: wrap;
+  }
+  .input-action input {
+    flex: 1 1 180px;
+  }
+  .input-action button {
+    flex: 1 0 auto;
+  }
+  .operation-status .actions,
+  .pagination > button {
+    width: 100%;
+  }
+  .operation-status .actions button,
+  .filters .actions button {
+    flex: 1 1 auto;
+  }
   .tabs {
     margin: 0 -18px;
     padding: 0 18px;
@@ -1206,6 +1233,7 @@ section,
   .tabs button {
     font-size: 10px;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .tabs button span {
     font-size: 8px;
