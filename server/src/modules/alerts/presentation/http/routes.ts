@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import type { ListAlerts } from '../../application/list-alerts.js';
 import { identifier } from '../../../../shared/http/query.js';
+
 export function alertRoutes(list: ListAlerts) {
     const router = Router();
 

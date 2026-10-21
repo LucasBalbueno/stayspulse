@@ -11,9 +11,12 @@ export { createApp } from './create-app.js';
 // independentes das credenciais e reutiliza o pool Prisma por instância quente.
 const app = express();
 app.disable('x-powered-by');
+
+// Rotas de saúde e status da API
 app.get('/', (_req, res) => {
   res.json({ service: 'StayPulse API', status: 'ok' });
 });
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });

@@ -3,6 +3,7 @@ import type { StoredReservation, ReservationRepository } from '../application/re
 import type { ReservationQuery, ReservationReader } from '../application/list-reservations.js';
 import { page } from '../../../infrastructure/database/pagination.js';
 
+// Transformar a linha do banco de dados em um objeto de domínio
 const toDomain = (row: Row): StoredReservation => ({
     ...row,
     reservationId: row.externalReservationId,
@@ -14,6 +15,7 @@ const toDomain = (row: Row): StoredReservation => ({
 export class PrismaReservationRepository implements ReservationReader, ReservationRepository {
     constructor(private readonly prisma: Prisma.TransactionClient) { }
 
+    // Busca no banco usando a chave composta. Se encontra chama toDomain
     async find(source: string, externalReservationId: string) {
         const row = await this.prisma.reservation.findUnique({
             where: {
@@ -24,6 +26,7 @@ export class PrismaReservationRepository implements ReservationReader, Reservati
         return row ? toDomain(row) : null;
     }
 
+    // Salva a reserva no banco. Se id for fornecido, atualiza a reserva existente, caso contrário cria uma nova. Retorna a reserva salva como um objeto de domínio.
     async save(value: Omit<StoredReservation, 'id'>, id?: string) {
         const { reservationId, checkIn, checkOut, ...rest } = value;
         const data = {
@@ -40,6 +43,7 @@ export class PrismaReservationRepository implements ReservationReader, Reservati
         return toDomain(row);
     }
 
+    // Procura outras reservas que ocupam a mesma propriedade no mesmo período (Sobreposição)
     async overlaps(value: StoredReservation) {
         const rows = await this.prisma.reservation.findMany({
             where: {
@@ -54,6 +58,7 @@ export class PrismaReservationRepository implements ReservationReader, Reservati
         return rows.map(toDomain);
     }
 
+    // Lista reservas com paginação e filtros. Retorna uma página de reservas como objetos de domínio.
     async list({ limit, cursor, ...filters }: ReservationQuery) {
         const rows = await this.prisma.reservation.findMany({
             where: {

@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 
+// Organizar os dados de forma canônica para gerar um hash consistente
+// Depois o hash é usado em comparações
 function canonical(value: unknown): string {
     if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
 
@@ -17,5 +19,6 @@ function canonical(value: unknown): string {
     return JSON.stringify(value);
 }
 
+// Exporta a função de criar Hash de forma organizada
 export const hash = (value: unknown) =>
     createHash('sha256').update(canonical(value)).digest('hex');

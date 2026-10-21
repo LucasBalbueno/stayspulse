@@ -1,3 +1,4 @@
+// Contrato de uma reserva
 export interface Reservation {
   id: string;
   source: string;
@@ -9,6 +10,7 @@ export interface Reservation {
   updatedAt: Date;
 }
 
+// Contrato de uma reserva armazenada, com versão e hash de estado
 export interface StoredReservation extends Reservation {
   sourceVersion: number;
   stateHash: string;

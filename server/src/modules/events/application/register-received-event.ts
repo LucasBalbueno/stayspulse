@@ -1,12 +1,14 @@
 import type { EventWriter } from './event-repository.js';
 import type { EventPayload } from '../domain/event.js';
 
+// Registra um evento que acabou de chegar
 export class RegisterReceivedEvent {
   constructor(
-    private readonly writer: EventWriter,
-    private readonly now: () => Date = () => new Date(),
+    private readonly writer: EventWriter, // Repositório para escrita de eventos
+    private readonly now: () => Date = () => new Date(), // Função para obter a data/hora atual
   ) { }
 
+  // Executa o registro do evento recebido
   async execute(payload: EventPayload, requestId: string, originalPayload: unknown = payload) {
     const event = await this.writer.insert({
       eventId: payload.eventId,
